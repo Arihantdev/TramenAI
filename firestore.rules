@@ -1,0 +1,39 @@
+rules_version = '2';
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // Live train feed — everyone (passenger/copilot/control) reads this;
+    // only signed-in accounts can push updates.
+    match /train/{trainId} {
+      allow read: if true;
+      allow write: if request.auth != null;
+    }
+
+    // Passenger complaints — read openly, write requires sign-in.
+    match /complaints/{complaintId} {
+      allow read: if true;
+      allow write: if request.auth != null;
+    }
+
+    // Staff role lookup — an account may read ONLY its own role document.
+    // Self-registration creates this doc ONCE for its own uid with a fixed
+    // shape (role/name/email/createdAt only, role must be controller or
+    // copilot). It can never be updated or deleted from the client — so once
+    // created, a staff member's role can't be changed by editing the doc,
+    // only by an admin in the Firebase Console.
+    match /staff/{uid} {
+      allow read: if request.auth != null && request.auth.uid == uid;
+      allow create: if request.auth != null
+                    && request.auth.uid == uid
+                    && request.resource.data.role in ['controller', 'copilot']
+                    && request.resource.data.keys().hasOnly(['role', 'name', 'email', 'createdAt']);
+      allow update, delete: if false;
+    }
+
+    // Deny everything else by default.
+    match /{document=**} {
+      allow read, write: if false;
+    }
+  }
+}
