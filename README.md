@@ -44,7 +44,11 @@ TramenAI provides a real-time-inspired control interface for managing complex ra
 
 ## 📸 Screenshots
 
-> Add screenshots of the TramenAI dashboard here to showcase the interface.
+### 🚆 LIVE Railway Operations Dashboard
+
+![TramenAI LIVE Dashboard](./screenshot-live-dashboard.png)
+
+TramenAI's live operations dashboard provides a real-time-inspired view of railway traffic, active trains, network health, conflicts, delays, and AI-powered recommendations across the Delhi / Delhi-NCR network.
 
 ---
 
